@@ -90,7 +90,10 @@ def instant_code() -> None:
 def impf_me(location: dict):
     """ Helper function to support concurrency """
     global b  # Open Browser Helper variable
-    x = b or Browser(**location)
+
+    browser_args = location | {"codes": settings.CODES}
+
+    x = b or Browser(**browser_args)
 
     # Keep Browser open
     if settings.KEEP_BROWSER and not (settings.CONCURRENT_ENABLED):
@@ -99,7 +102,7 @@ def impf_me(location: dict):
             x.keep_browser = True
             b = x
         else:
-            x.reinit(**location)
+            x.reinit(**browser_args)
 
     # Continue with normal loop
     try: x.control_main()

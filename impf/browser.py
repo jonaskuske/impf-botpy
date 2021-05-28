@@ -28,6 +28,7 @@ class Browser:
     driver: webdriver = field(init=False)
     wait: WebDriverWait = field(init=False)
     location: str
+    codes: list = field(default_factory=list)
     code: str = ''
     location_full: str = ''  # Helper variable for extracting full MVZ name
     keep_browser: bool = False  # Helper variable to indicate whether or not to keep browser open for reuse
@@ -57,6 +58,7 @@ class Browser:
         Browser with new data - sorry """
         self.location = kwargs.get('location')
         self.code = kwargs.get('code')
+        self.codes = kwargs.get('codes')
         self.error_counter = 0
         self.location_full = ''
         self.logger = settings.LocationAdapter(logger, {'location': self.location[:5]})
@@ -339,12 +341,24 @@ class Browser:
         """ Vermittlungscode für Location eingeben und prüfen """
         title = self.wait.until(EC.presence_of_element_located((By.XPATH, '//h1')))
         assert title.text == 'Wurde Ihr Anspruch auf eine Corona-Schutzimpfung bereits geprüft?'
+
+        code = self.code
+
+        code_override = next(
+            (x for x in self.codes if x["server_id"] == self.server_id),
+            None
+        )
+
+        if code_override != None:
+            self.logger.info(f"Using code {code_override['code']} for server {code_override['server_id']}")
+            code = code_override["code"]
+
         for i in range(3):
             element = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, f'//input[@type="text" and @data-index="{i}"]')))
-            code = self.code.split('-')[i]
+            code_section = code.split('-')[i]
             element.clear()
-            element.send_keys(code)
+            element.send_keys(code_section)
 
         submit = self.wait.until(EC.element_to_be_clickable((By.XPATH, f'//button[@type="submit"]')))
         submit.click()
