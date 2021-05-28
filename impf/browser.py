@@ -334,7 +334,17 @@ class Browser:
                 raise Exception('Did not get <201 Created> from server')
             sleep(15)
 
-        self.logger.warning('No Appointment indicator received from backend')
+        self.logger.warning('No Appointment indicator received from backend, booking first appointment')
+        if api.book_appointment(appointments, 1):
+            appointment = fappointments[int(_code) - 1].replace("* ", "").replace(f' (appt:{_code})', '')
+            send_alert(f'Successfully booked appointment "**{appointment}**" – check your mails!  \n'
+                       f'Thanks for using RAUSYS Technologies :)  \n'
+                       f'Feedback is highly appreciated: '
+                       f'https://github.com/alfonsrv/impf-botpy/issues/1 and only takes 2 seconds!')
+            self.logger.info('Booking confirmed! Feedback is highly appreciated: '
+                             'https://github.com/alfonsrv/impf-botpy/issues/1 and only takes 2 seconds!')
+            return
+        raise Exception('Did not get <201 Created> from server')
 
     @shadow_ban
     def fill_code(self) -> None:
