@@ -2,6 +2,7 @@ import os
 import platform
 import logging
 import locale
+import random
 from datetime import datetime
 from typing import List
 
@@ -27,7 +28,22 @@ def browser_options():
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
     opts.add_experimental_option("excludeSwitches", ["enable-logging"])
     if settings.SELENIUM_DEBUG: opts.add_argument('--auto-open-devtools-for-tabs')
-    if settings.USER_AGENT != 'default': opts.add_argument(f'user-agent={settings.USER_AGENT}')
+    if settings.USER_AGENT != 'default':
+        if settings.USER_AGENT != 'random': opts.add_argument(f'user-agent={settings.USER_AGENT}')
+        else:
+            user_agent = random.choice([
+                # firefox
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0',
+                #chrome
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36',
+                # edge
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36 Edg/90.0.818.66',
+                # edge 92/canary
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4506.0 Safari/537.36 Edg/92.0.900.0',
+                # opera
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 OPR/76.0.4017.123'
+            ])
+            opts.add_argument(f'user-agent={user_agent}')
     # Fallback, falls Chrome Installation in Program Files installiert ist
     if settings.CHROME_PATH: opts.binary_location = settings.CHROME_PATH
     if not settings.CONCURRENT_ENABLED:

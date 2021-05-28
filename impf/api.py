@@ -1,6 +1,7 @@
 from base64 import b64encode
 from dataclasses import dataclass, field
 from time import sleep
+import random
 from typing import Any, List, Dict, Union
 from urllib.parse import urlparse
 import logging
@@ -13,9 +14,26 @@ from impf.decorators import api_call, next_gen
 
 logger = logging.getLogger(__name__)
 
+user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'
+
+if settings.USER_AGENT != 'default':
+    if settings.USER_AGENT != 'random': user_agent = settings.USER_AGENT
+    else:
+        user_agent = random.choice([
+            # firefox
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0',
+            #chrome
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36',
+            # edge
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36 Edg/90.0.818.66',
+            # edge 92/canary
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4506.0 Safari/537.36 Edg/92.0.900.0',
+            # opera
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 OPR/76.0.4017.123'
+        ])
+
 HEADERS = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'
-                            if settings.USER_AGENT == 'default' else settings.USER_AGENT,
+            'User-Agent': user_agent,
             'Content-Type': 'application/json; charset=utf-8',
             'Accept-Encoding': 'gzip, deflate, br',
         }
