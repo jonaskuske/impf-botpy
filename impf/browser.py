@@ -335,8 +335,8 @@ class Browser:
             sleep(15)
 
         self.logger.warning('No Appointment indicator received from backend, booking first appointment')
-        if api.book_appointment(appointments, int(1)) or self.book_appointment(int(1)):
-            appointment = fappointments[int(1) - 1].replace("* ", "").replace(f' (appt:{"1"})', '')
+        if api.book_appointment(appointments, int("1")) or self.book_appointment(int("1")):
+            appointment = fappointments[int("1") - 1].replace("* ", "").replace(f' (appt:{"1"})', '')
             send_alert(f'Successfully booked appointment "**{appointment}**" – check your mails!  \n'
                        f'Thanks for using RAUSYS Technologies :)  \n'
                        f'Feedback is highly appreciated: '
